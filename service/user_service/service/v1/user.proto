@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package user_service.service;
+
+import "google/api/annotations.proto";
+import "service/user_service/model/v1/user.proto";
+
+option go_package = "github.com/olzzhas/grpc-sneakershop/service/user_service/service;proto_user_service";
+
+service UserService {
+  rpc CreateUser(CreateUserRequest) returns(CreateUserResponse){
+    option (google.api.http) = {
+      post: "/vi/create-user",
+      body: "*"
+    };
+  }
+
+  rpc GetUsers(GetUsersRequest) returns (GetUsersResponse){
+    option (google.api.http) = {
+      get: "/v1/get-users"
+    };
+  }
+
+  rpc UpdateUser(UpdateUserRequest) returns(UpdateUserResponse){
+    option (google.api.http) = {
+      patch: "/v1/update-user/{id}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteUser(DeleteUserRequest) returns(DeleteUserRequest){
+    option (google.api.http) = {
+      delete: "/v1/delete-user/{id}"
+    };
+  }
+}
+
+// Create
+message CreateUserRequest{
+  string name = 1;
+  uint32 age = 2;
+  string email = 3;
+  string password = 4;
+}
+
+message CreateUserResponse{
+  model.User user = 1;
+}
+
+// Get
+message GetUsersRequest{
+  string email = 1;
+}
+
+message GetUsersResponse{
+  model.User user = 1;
+}
+
+// Update
+message UpdateUserRequest{
+  uint32 id = 1;
+  string name = 2;
+  uint32 age = 3;
+  string email = 4;
+  string password = 5;
+}
+
+message UpdateUserResponse{
+  model.User user = 1;
+}
+
+// Delete
+message DeleteUserRequest{
+  uint32 id = 1;
+}
+
+message DeleteUserResponse{
+  model.User user = 1;
+}
+
