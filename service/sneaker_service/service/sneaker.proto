@@ -2,21 +2,21 @@ syntax = "proto3";
 
 package sneaker_service.service;
 
-option go_package = "github.com/olzzhas/grpc-sneakershop/service/sneaker_service/service;proto_sneaker_service";
-
 import "google/api/annotations.proto";
 import "service/sneaker_service/model/sneaker.proto";
+
+option go_package = "github.com/olzzhas/grpc-sneakershop/service/sneaker_service/service;proto_sneaker_service";
 
 service SneakerService {
   rpc GetSneakers(GetSneakersRequest) returns (GetSneakersResponse){
     option (google.api.http) = {
-      get: "/v1/get-sneakers"
+      get: "/get-sneakers"
     };
   }
 
   rpc UpdateSneaker(UpdateSneakerRequest) returns(UpdateSneakerResponse){
     option (google.api.http) = {
-      patch: "/v1/update-sneaker/{id}"
+      patch: "/update-sneaker/{id}"
       body: "*"
     };
   }
@@ -24,8 +24,8 @@ service SneakerService {
 
 // Request for get sneakers.
 message GetSneakersRequest{
-  optional string model = 1;
-  optional uint32 price = 2;
+  string model = 1;
+  uint32 price = 2;
 }
 
 // Response for get sneakers.
@@ -36,8 +36,8 @@ message GetSneakersResponse{
 // Request for update sneaker.
 message UpdateSneakerRequest{
   string id = 1;
-  optional string model = 2;
-  optional uint32 price = 3;
+  string model = 2;
+  uint32 price = 3;
 }
 
 // Response for update sneaker.
