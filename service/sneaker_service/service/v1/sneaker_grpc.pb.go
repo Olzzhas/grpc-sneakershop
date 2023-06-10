@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v4.23.1
-// source: service/sneaker_service/service/sneaker.proto
+// source: service/sneaker_service/service/v1/sneaker.proto
 
 package proto_sneaker_service
 
@@ -142,5 +142,5 @@ var SneakerService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "service/sneaker_service/service/sneaker.proto",
+	Metadata: "service/sneaker_service/service/v1/sneaker.proto",
 }
