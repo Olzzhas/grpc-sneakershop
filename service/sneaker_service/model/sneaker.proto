@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package sneaker_service.model;
+
+option go_package = "github.com/olzzhas/grpc-sneakershop/service/sneaker_service/model;proto_sneaker_model";
+
+message Sneaker{
+  string model = 1;
+  uint32 price = 2;
+}
