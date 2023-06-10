@@ -7,7 +7,7 @@
 package proto_sneaker_service
 
 import (
-	model "github.com/olzzhas/grpc-sneakershop/service/sneaker_service/model"
+	model "github.com/olzzhas/grpc-sneakershop/service/sneaker_service/model/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
