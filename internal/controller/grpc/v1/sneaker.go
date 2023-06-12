@@ -11,7 +11,7 @@ type sneakerServer struct {
 	proto_sneaker_service.UnimplementedSneakerServiceServer
 }
 
-func NewUserServer(unimplementedSneakerServiceServer proto_sneaker_service.UnimplementedSneakerServiceServer) *sneakerServer {
+func NewSneakerServer(unimplementedSneakerServiceServer proto_sneaker_service.UnimplementedSneakerServiceServer) *sneakerServer {
 	return &sneakerServer{UnimplementedSneakerServiceServer: unimplementedSneakerServiceServer}
 }
 

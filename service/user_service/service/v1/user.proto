@@ -10,7 +10,7 @@ option go_package = "github.com/olzzhas/grpc-sneakershop/service/user_service/se
 service UserService {
   rpc CreateUser(CreateUserRequest) returns(CreateUserResponse){
     option (google.api.http) = {
-      post: "/vi/create-user",
+      post: "/v1/create-user",
       body: "*"
     };
   }
@@ -44,7 +44,7 @@ message CreateUserRequest{
 }
 
 message CreateUserResponse{
-  model.User user = 1;
+  uint32 id = 1;
 }
 
 // Get
@@ -53,7 +53,7 @@ message GetUsersRequest{
 }
 
 message GetUsersResponse{
-  model.User user = 1;
+  repeated model.User user = 1;
 }
 
 // Update

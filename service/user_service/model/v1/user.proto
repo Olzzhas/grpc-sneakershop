@@ -2,10 +2,12 @@ syntax = "proto3";
 
 package user_service.model;
 
-option go_package = "github.com/olzzhas/grpc-sneakershop/service/user_service/model;proto_user_model";
+option go_package = "github.com/olzzhas/grpc-sneakershop/service/user_service/model/v1;proto_user_model";
 
 message User{
-  string ID = 1;
-  string model = 2;
-  uint32 price = 3;
+  uint32 id = 1;
+  string name = 2;
+  string email = 3;
+  string password = 4;
+  uint32 age = 5;
 }
