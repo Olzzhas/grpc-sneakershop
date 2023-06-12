@@ -38,9 +38,8 @@ service UserService {
 // Create
 message CreateUserRequest{
   string name = 1;
-  uint32 age = 2;
-  string email = 3;
-  string password = 4;
+  string email = 2;
+  string password = 3;
 }
 
 message CreateUserResponse{
@@ -60,9 +59,8 @@ message GetUsersResponse{
 message UpdateUserRequest{
   uint32 id = 1;
   string name = 2;
-  uint32 age = 3;
-  string email = 4;
-  string password = 5;
+  string email = 3;
+  string password = 4;
 }
 
 message UpdateUserResponse{

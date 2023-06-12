@@ -3,12 +3,17 @@ package v1
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	_ "github.com/lib/pq"
 	"github.com/olzzhas/grpc-sneakershop/internal/domain/entity"
 	proto_user_model "github.com/olzzhas/grpc-sneakershop/service/user_service/model/v1"
 	proto_user_service "github.com/olzzhas/grpc-sneakershop/service/user_service/service/v1"
-	"math/rand"
+	"time"
+)
+
+var (
+	ErrDuplicateEmail = errors.New("duplicate email")
 )
 
 type userServer struct {
@@ -36,17 +41,48 @@ func connectDB() (*sql.DB, error) {
 }
 
 func (s *userServer) GetUsers(ctx context.Context, req *proto_user_service.GetUsersRequest) (*proto_user_service.GetUsersResponse, error) {
-	example := entity.User{
-		ID:       1,
-		Name:     "Olzhas",
-		Age:      19,
-		Email:    "211337@astanait.edu.kz",
-		Password: "olzzhas",
+	db, err := connectDB()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	query := `
+		SELECT * FROM users ORDER BY id
+	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	users := []*entity.User{}
+
+	for rows.Next() {
+		var user entity.User
+
+		err := rows.Scan(
+			&user.ID,
+			&user.CreatedAt,
+			&user.Name,
+			&user.Email,
+			&user.Password,
+			&user.Activated,
+			&user.Version,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		users = append(users, &user)
 	}
 
 	return &proto_user_service.GetUsersResponse{
 		User: []*proto_user_model.User{
-			example.ToProto(),
+			// don't forget to fix
 		},
 	}, nil
 }
@@ -62,25 +98,41 @@ func (s *userServer) CreateUser(ctx context.Context, req *proto_user_service.Cre
 	}
 	defer db.Close()
 
-	testUser := entity.User{
-		ID:       uint32(rand.Intn(1000000)),
-		Name:     "Olzhas",
-		Age:      19,
-		Email:    "211337@astanait.edu.kz",
-		Password: "olzzhas",
-	}
-
-	args := []any{testUser.ID, testUser.Name, testUser.Email, testUser.Password, testUser.Age}
-
 	query := `
-		INSERT INTO users (id ,name, email, password, age)
-		VALUES ($1, $2, $3, $4, $5)
+		INSERT INTO users (name, email, password_hash, activated)
+		VALUES ($1, $2, $3, $4)
+		RETURNING id, created_at, version
 	`
 
-	db.QueryRow(query, args...)
+	var password entity.Password
+	passHash, err := password.Set(req.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	reqUser := entity.User{
+		Name:      req.Name,
+		Password:  password,
+		Email:     req.Email,
+		Activated: false,
+	}
+
+	args := []any{reqUser.Name, reqUser.Email, passHash, false}
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err = db.QueryRowContext(ctx, query, args...).Scan(&reqUser.ID, &reqUser.CreatedAt, &reqUser.Version)
+	if err != nil {
+		switch {
+		case err.Error() == `pq: duplicate key value violates unique constraint "users_email_key"`:
+			return nil, ErrDuplicateEmail
+		default:
+			return nil, err
+		}
+	}
 
 	return &proto_user_service.CreateUserResponse{
-		Id: testUser.ID,
+		Id: reqUser.ID,
 	}, nil
 
 }
