@@ -14,9 +14,12 @@ import (
 )
 
 type authServer struct {
-	proto_authentication_service.UnimplementedUserServiceServer
+	proto_authentication_service.UnimplementedAuthenticationServiceServer
 }
 
+func NewAuthenticationServer(unimplementedAuthenticationServiceServer proto_authentication_service.UnimplementedAuthenticationServiceServer) *authServer {
+	return &authServer{UnimplementedAuthenticationServiceServer: unimplementedAuthenticationServiceServer}
+}
 func (s *authServer) CreateAuthenticationToken(ctx context.Context, req *proto_authentication_service.CreateAuthenticationTokenRequest) (*proto_authentication_service.CreateAuthenticationTokenResponse, error) {
 	db, err := connectDB()
 	if err != nil {

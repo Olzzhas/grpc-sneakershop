@@ -7,8 +7,11 @@ import (
 	"fmt"
 	_ "github.com/lib/pq"
 	"github.com/olzzhas/grpc-sneakershop/internal/domain/entity"
+	proto_authentication_service "github.com/olzzhas/grpc-sneakershop/service/authentication_service/service"
 	proto_user_model "github.com/olzzhas/grpc-sneakershop/service/user_service/model/v1"
 	proto_user_service "github.com/olzzhas/grpc-sneakershop/service/user_service/service/v1"
+	"google.golang.org/grpc"
+	"log"
 	"time"
 )
 
@@ -130,6 +133,17 @@ func (s *userServer) CreateUser(ctx context.Context, req *proto_user_service.Cre
 			return nil, err
 		}
 	}
+
+	conn, err := grpc.Dial("localhost:8082", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("failed to connect: %v", err)
+	}
+	defer conn.Close()
+
+	client := proto_authentication_service.NewAuthenticationServiceClient(conn)
+
+	response, err := client.CreateAuthenticationToken(context.Background(), &proto_authentication_service.CreateAuthenticationTokenRequest{UserId: reqUser.ID, Password: req.Password})
+	fmt.Println(response)
 
 	return &proto_user_service.CreateUserResponse{
 		Id: reqUser.ID,

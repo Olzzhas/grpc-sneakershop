@@ -19,89 +19,89 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserService_CreateAuthenticationToken_FullMethodName = "/authentication_service.service.UserService/CreateAuthenticationToken"
+	AuthenticationService_CreateAuthenticationToken_FullMethodName = "/authentication_service.service.AuthenticationService/CreateAuthenticationToken"
 )
 
-// UserServiceClient is the client API for UserService service.
+// AuthenticationServiceClient is the client API for AuthenticationService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type UserServiceClient interface {
+type AuthenticationServiceClient interface {
 	CreateAuthenticationToken(ctx context.Context, in *CreateAuthenticationTokenRequest, opts ...grpc.CallOption) (*CreateAuthenticationTokenResponse, error)
 }
 
-type userServiceClient struct {
+type authenticationServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
-	return &userServiceClient{cc}
+func NewAuthenticationServiceClient(cc grpc.ClientConnInterface) AuthenticationServiceClient {
+	return &authenticationServiceClient{cc}
 }
 
-func (c *userServiceClient) CreateAuthenticationToken(ctx context.Context, in *CreateAuthenticationTokenRequest, opts ...grpc.CallOption) (*CreateAuthenticationTokenResponse, error) {
+func (c *authenticationServiceClient) CreateAuthenticationToken(ctx context.Context, in *CreateAuthenticationTokenRequest, opts ...grpc.CallOption) (*CreateAuthenticationTokenResponse, error) {
 	out := new(CreateAuthenticationTokenResponse)
-	err := c.cc.Invoke(ctx, UserService_CreateAuthenticationToken_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, AuthenticationService_CreateAuthenticationToken_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// UserServiceServer is the server API for UserService service.
-// All implementations must embed UnimplementedUserServiceServer
+// AuthenticationServiceServer is the server API for AuthenticationService service.
+// All implementations must embed UnimplementedAuthenticationServiceServer
 // for forward compatibility
-type UserServiceServer interface {
+type AuthenticationServiceServer interface {
 	CreateAuthenticationToken(context.Context, *CreateAuthenticationTokenRequest) (*CreateAuthenticationTokenResponse, error)
-	mustEmbedUnimplementedUserServiceServer()
+	mustEmbedUnimplementedAuthenticationServiceServer()
 }
 
-// UnimplementedUserServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedUserServiceServer struct {
+// UnimplementedAuthenticationServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedAuthenticationServiceServer struct {
 }
 
-func (UnimplementedUserServiceServer) CreateAuthenticationToken(context.Context, *CreateAuthenticationTokenRequest) (*CreateAuthenticationTokenResponse, error) {
+func (UnimplementedAuthenticationServiceServer) CreateAuthenticationToken(context.Context, *CreateAuthenticationTokenRequest) (*CreateAuthenticationTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateAuthenticationToken not implemented")
 }
-func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
+func (UnimplementedAuthenticationServiceServer) mustEmbedUnimplementedAuthenticationServiceServer() {}
 
-// UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to UserServiceServer will
+// UnsafeAuthenticationServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AuthenticationServiceServer will
 // result in compilation errors.
-type UnsafeUserServiceServer interface {
-	mustEmbedUnimplementedUserServiceServer()
+type UnsafeAuthenticationServiceServer interface {
+	mustEmbedUnimplementedAuthenticationServiceServer()
 }
 
-func RegisterUserServiceServer(s grpc.ServiceRegistrar, srv UserServiceServer) {
-	s.RegisterService(&UserService_ServiceDesc, srv)
+func RegisterAuthenticationServiceServer(s grpc.ServiceRegistrar, srv AuthenticationServiceServer) {
+	s.RegisterService(&AuthenticationService_ServiceDesc, srv)
 }
 
-func _UserService_CreateAuthenticationToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AuthenticationService_CreateAuthenticationToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateAuthenticationTokenRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).CreateAuthenticationToken(ctx, in)
+		return srv.(AuthenticationServiceServer).CreateAuthenticationToken(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserService_CreateAuthenticationToken_FullMethodName,
+		FullMethod: AuthenticationService_CreateAuthenticationToken_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).CreateAuthenticationToken(ctx, req.(*CreateAuthenticationTokenRequest))
+		return srv.(AuthenticationServiceServer).CreateAuthenticationToken(ctx, req.(*CreateAuthenticationTokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
+// AuthenticationService_ServiceDesc is the grpc.ServiceDesc for AuthenticationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var UserService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "authentication_service.service.UserService",
-	HandlerType: (*UserServiceServer)(nil),
+var AuthenticationService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "authentication_service.service.AuthenticationService",
+	HandlerType: (*AuthenticationServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateAuthenticationToken",
-			Handler:    _UserService_CreateAuthenticationToken_Handler,
+			Handler:    _AuthenticationService_CreateAuthenticationToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

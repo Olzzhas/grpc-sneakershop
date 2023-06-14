@@ -8,7 +8,7 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/olzzhas/grpc-sneakershop/service/authentication_service/service;proto_authentication_service";
 
-service UserService {
+service AuthenticationService {
   rpc CreateAuthenticationToken(CreateAuthenticationTokenRequest) returns(CreateAuthenticationTokenResponse){
     option (google.api.http) = {
       post: "/v1/create-authtoken",

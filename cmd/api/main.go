@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	v1 "github.com/olzzhas/grpc-sneakershop/internal/controller/grpc/v1"
+	proto_authentication_service "github.com/olzzhas/grpc-sneakershop/service/authentication_service/service"
 	proto_sneaker_service "github.com/olzzhas/grpc-sneakershop/service/sneaker_service/service/v1"
 	proto_user_service "github.com/olzzhas/grpc-sneakershop/service/user_service/service/v1"
 	"golang.org/x/sync/errgroup"
@@ -34,14 +35,25 @@ func main() {
 		v1.NewUserServer(proto_user_service.UnimplementedUserServiceServer{}),
 	)
 
+	proto_authentication_service.RegisterAuthenticationServiceServer(
+		grpcServer,
+		v1.NewAuthenticationServer(proto_authentication_service.UnimplementedAuthenticationServiceServer{}),
+	)
+
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+
 	err = proto_sneaker_service.RegisterSneakerServiceHandlerFromEndpoint(context.Background(), mux, grpcHostPort, opts)
 	if err != nil {
 		panic(err)
 	}
 
 	err = proto_user_service.RegisterUserServiceHandlerFromEndpoint(context.Background(), mux, grpcHostPort, opts)
+	if err != nil {
+		panic(err)
+	}
+
+	err = proto_authentication_service.RegisterAuthenticationServiceHandlerFromEndpoint(context.Background(), mux, grpcHostPort, opts)
 	if err != nil {
 		panic(err)
 	}
