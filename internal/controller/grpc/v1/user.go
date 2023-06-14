@@ -10,6 +10,7 @@ import (
 	proto_authentication_service "github.com/olzzhas/grpc-sneakershop/service/authentication_service/service"
 	proto_user_model "github.com/olzzhas/grpc-sneakershop/service/user_service/model/v1"
 	proto_user_service "github.com/olzzhas/grpc-sneakershop/service/user_service/service/v1"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"google.golang.org/grpc"
 	"log"
 	"time"
@@ -28,7 +29,7 @@ func NewUserServer(unimplementedUserServiceServer proto_user_service.Unimplement
 }
 
 func connectDB() (*sql.DB, error) {
-	db, err := sql.Open("postgres", "postgres://postgres:olzhas4@localhost/sneakershop?sslmode=disable")
+	db, err := sql.Open("postgres", "postgres://postgres:olzhas4@localhost:5432/sneakershop?sslmode=disable")
 	if err != nil {
 		return nil, fmt.Errorf("error while sql open: %s", err)
 	}
@@ -144,6 +145,45 @@ func (s *userServer) CreateUser(ctx context.Context, req *proto_user_service.Cre
 
 	response, err := client.CreateAuthenticationToken(context.Background(), &proto_authentication_service.CreateAuthenticationTokenRequest{UserId: reqUser.ID, Password: req.Password})
 	fmt.Println(response)
+
+	rabbitconn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	if err != nil {
+		log.Fatalf("failed to connect to rabbitmq: %v", err)
+	}
+	defer conn.Close()
+
+	ch, err := rabbitconn.Channel()
+	if err != nil {
+		log.Fatalf("failed to open channel: %v", err)
+	}
+	defer ch.Close()
+
+	q, err := ch.QueueDeclare(
+		"hello", // name
+		false,   // durable
+		false,   // delete when unused
+		false,   // exclusive
+		false,   // no-wait
+		nil,     // arguments
+	)
+	if err != nil {
+		log.Fatalf("Failed to declare a queue: %v", err)
+	}
+
+	err = ch.PublishWithContext(ctx,
+		"",     // exchange
+		q.Name, // routing key
+		false,  // mandatory
+		false,  // immediate
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        response.Token.Token,
+		})
+	if err != nil {
+		log.Fatalf("Failed to publish a message: %v", err)
+	}
+
+	log.Printf(" [x] Sent %s\n", string(response.Token.Token))
 
 	return &proto_user_service.CreateUserResponse{
 		Id: reqUser.ID,
