@@ -3,12 +3,9 @@ syntax = "proto3";
 package authentication_service.model;
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/olzzhas/grpc-sneakershop/service/authentication_service/model;proto_user_model";
+option go_package = "github.com/olzzhas/grpc-sneakershop/service/authentication_service/model;proto_authentication_model";
 
-message User{
-  string plaintext = 1;
-  bytes hash = 2;
-  uint32 userid = 3;
-  google.protobuf.Timestamp expiry = 4;
-  string scope = 5;
+message Token{
+  bytes token = 1;
+  google.protobuf.Timestamp expiry = 2;
 }
