@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS sneakers;
+DROP TABLE IF EXISTS sneaker;
